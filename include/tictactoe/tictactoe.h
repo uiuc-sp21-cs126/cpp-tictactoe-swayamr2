@@ -19,6 +19,7 @@ enum class BoardState {
  * This class can store a Tic-Tac-Toe board and evaluate its state.
  */
 class Board {
+
  public:
   /**
    * Constructs a Board from a string consisting of 9 characters in row-major
@@ -31,15 +32,25 @@ class Board {
    * This method throws a std::invalid_argument exception if the string provided
    * is not a valid board.
    */
-  Board(const std::string& board);
+  Board(std::string board);
 
   /**
    * Evaluates the state of the board.
    */
-  BoardState EvaluateBoard() const;
 
  private:
-  /// TODO: add your helper functions and member variables here
+  std::string userString;
+  BoardState currentEval;
+  bool boardPlayable = true;
+  int boardDimension = 3;
+  int numberOfWinners = 0;
+  char** userBoard;
+  BoardState EvaluateBoard();
+  bool isBoardPlayable(char** board);
+  int countCharOnBoard(char** board, char player);
+  char** convertToBoard(std::string input);
+  void xWinner(char** board);
+  void oWinner(char** board);
 };
 
 }  // namespace tictactoe
