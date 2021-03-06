@@ -40,9 +40,9 @@ class Board {
   BoardState EvaluateBoard();
   std::string userString;
   int boardDimension = 3;
-  int numberOfWinners = 0;
-  BoardState currentEval;
-  char userBoard[3][3];
+  BoardState currentEval = BoardState::NoWinner;
+  char winningPlayer;
+  std::vector<std::vector<char>> userBoard;
   /**
    * Checks to see whether the passed string for the Board class is valid
    * @param user
@@ -57,9 +57,9 @@ class Board {
    * @return an integer representing the number of times a character appears
    * on the board
    */
-  int countCharOnBoard(char board[3][3], char player);
+  int countCharOnBoard(std::vector<std::vector<char>> userBoard, char player);
 
-  bool isBoardPlayable(char board[3][3]);
+  bool isBoardPlayable(std::vector<std::vector<char>> userBoard);
   /**
    * Converts the passed string into a 2D char array
    * @param input - the initialized string
@@ -67,16 +67,11 @@ class Board {
   void convertToBoard(std::string input);
 
   /**
-   * Method that checks whether the X player has won on the current board
+   * Method that checks whether a player has won on the current board
    * @param board
    */
-  void xWinner(char board[3][3]);
-
-  /**
-   * Method that checks whether the O player has won on the current board
-   * @param board
-   */
-  void oWinner(char board[3][3]);
+  void isWinner(std::vector<std::vector<char>> userBoard);
+  void assignWinner(char player);
 };
 
 }  // namespace tictactoe
