@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-
+#include <vector>
 namespace tictactoe {
 
 /**
@@ -19,7 +19,6 @@ enum class BoardState {
  * This class can store a Tic-Tac-Toe board and evaluate its state.
  */
 class Board {
-
  public:
   /**
    * Constructs a Board from a string consisting of 9 characters in row-major
@@ -35,22 +34,49 @@ class Board {
   Board(std::string board);
 
   /**
-   * Evaluates the state of the board.
+   * Evaluates the state of the board, assigning and returning the correct enum
+   * @return currentEval
    */
-
- private:
+  BoardState EvaluateBoard();
   std::string userString;
-  BoardState currentEval;
-  bool boardPlayable = true;
   int boardDimension = 3;
   int numberOfWinners = 0;
-  char** userBoard;
-  BoardState EvaluateBoard();
-  bool isBoardPlayable(char** board);
-  int countCharOnBoard(char** board, char player);
-  char** convertToBoard(std::string input);
-  void xWinner(char** board);
-  void oWinner(char** board);
+  BoardState currentEval;
+  char userBoard[3][3];
+  /**
+   * Checks to see whether the passed string for the Board class is valid
+   * @param user
+   * @return an invalid argument exception
+   */
+  bool isStringConvertible(std::string user);
+
+  /**
+   * Counts the characters of a certain character(mainly 'X' and 'O') in the string
+   * @param board
+   * @param player - the passed character into this method
+   * @return an integer representing the number of times a character appears
+   * on the board
+   */
+  int countCharOnBoard(char board[3][3], char player);
+
+  bool isBoardPlayable(char board[3][3]);
+  /**
+   * Converts the passed string into a 2D char array
+   * @param input - the initialized string
+   */
+  void convertToBoard(std::string input);
+
+  /**
+   * Method that checks whether the X player has won on the current board
+   * @param board
+   */
+  void xWinner(char board[3][3]);
+
+  /**
+   * Method that checks whether the O player has won on the current board
+   * @param board
+   */
+  void oWinner(char board[3][3]);
 };
 
 }  // namespace tictactoe

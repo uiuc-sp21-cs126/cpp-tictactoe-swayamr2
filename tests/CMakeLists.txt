@@ -1,5 +1,5 @@
 # Tests need to be added as executables first
-add_executable(test-tictactoe test-main.cc test-tictactoe.cc)
+add_executable(test-tictactoe test-tictactoe.cc)
 
 # We're using C++17 in the test
 target_compile_features(test-tictactoe PRIVATE cxx_std_17)
