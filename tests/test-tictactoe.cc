@@ -26,6 +26,12 @@ TEST_CASE("Invalid playing board") {
   SECTION("Too many O's") {
     REQUIRE(Board("OXOXOXOXO").EvaluateBoard() == BoardState::UnreachableState);
   }
+  SECTION("Board with all X's") {
+    REQUIRE(Board("XXXXXXXXX").EvaluateBoard() == BoardState::UnreachableState);
+  }
+  SECTION("Board with all O's") {
+    REQUIRE(Board("OOOOOOOOO").EvaluateBoard() == BoardState::UnreachableState);
+  }
 }
 TEST_CASE("Board where X Wins via Row") {
   SECTION("1st Row X Win") {
@@ -92,9 +98,20 @@ TEST_CASE("Boards with no winner") {
     REQUIRE(Board("XXOOOXXXO").EvaluateBoard() == BoardState::NoWinner);
   }
   SECTION("Partly-filled board with no winner") {
-    REQUIRE(Board("XX...O...").EvaluateBoard() == BoardState::NoWinner);
+    REQUIRE(Board("XX...OO..").EvaluateBoard() == BoardState::NoWinner);
   }
   SECTION("Empty Board with no winner") {
     REQUIRE(Board(".........").EvaluateBoard() == BoardState::NoWinner);
+  }
+}
+TEST_CASE("Board has 2 winners") {
+  SECTION("Board with 2 Row wins") {
+    REQUIRE(Board("XXXOOO...").EvaluateBoard() == BoardState::UnreachableState);
+  }
+  SECTION("Board with 2 Column wins") {
+    REQUIRE(Board("XO.XO.XO.").EvaluateBoard() == BoardState::UnreachableState);
+  }
+  SECTION("Board with 2 X wins") {
+    REQUIRE(Board("XXXXOOXOO").EvaluateBoard() == BoardState::Xwins);
   }
 }

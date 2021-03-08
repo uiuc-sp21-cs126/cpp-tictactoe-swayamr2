@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 namespace tictactoe {
+using std::vector;
+using std::string;
 
 /**
  * This enumeration specifies the possible results of the evaluation of a
@@ -38,17 +40,20 @@ class Board {
    * @return currentEval
    */
   BoardState EvaluateBoard();
-  std::string userString;
+
+ private:
+  string userString;
   int boardDimension = 3;
   BoardState currentEval = BoardState::NoWinner;
   char winningPlayer;
-  std::vector<std::vector<char>> userBoard;
+  vector<vector<char>> gameBoard;
+  vector<char> playerMoves;
   /**
    * Checks to see whether the passed string for the Board class is valid
    * @param user
    * @return an invalid argument exception
    */
-  bool isStringConvertible(std::string user);
+  bool isStringConvertible(string user);
 
   /**
    * Counts the characters of a certain character(mainly 'X' and 'O') in the string
@@ -57,20 +62,28 @@ class Board {
    * @return an integer representing the number of times a character appears
    * on the board
    */
-  int countCharOnBoard(std::vector<std::vector<char>> userBoard, char player);
-
-  bool isBoardPlayable(std::vector<std::vector<char>> userBoard);
+  int countCharOnBoard(vector<vector<char>> userBoard, char player);
+  /**
+   * Verifies whether a board is playable or not
+   * @param userBoard
+   * @return boolean if the board can be played on
+   */
+  bool isBoardPlayable(vector<vector<char>> userBoard);
   /**
    * Converts the passed string into a 2D char array
    * @param input - the initialized string
    */
-  void convertToBoard(std::string input);
+  void convertToBoard(string input);
 
   /**
-   * Method that checks whether a player has won on the current board
+   * Checks whether there is a winner on the current board
    * @param board
    */
-  void isWinner(std::vector<std::vector<char>> userBoard);
+  void isWinner(vector<vector<char>> userBoard);
+  /**
+   * Assigns the correct enum to the holder variable based on who has won
+   * @param player
+   */
   void assignWinner(char player);
 };
 
