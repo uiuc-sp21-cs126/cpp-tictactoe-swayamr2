@@ -46,8 +46,9 @@ class Board {
   int boardDimension = 3;
   BoardState currentEval = BoardState::NoWinner;
   char winningPlayer;
-  vector<vector<char>> gameBoard;
   vector<char> playerMoves;
+  vector<vector<char>> gameBoard;
+
   /**
    * Checks to see whether the passed string for the Board class is valid
    * @param user
@@ -63,14 +64,15 @@ class Board {
    * on the board
    */
   int countCharOnBoard(vector<vector<char>> userBoard, char player);
+
   /**
    * Verifies whether a board is playable or not
    * @param userBoard
-   * @return boolean if the board can be played on
    */
   bool isBoardPlayable(vector<vector<char>> userBoard);
+
   /**
-   * Converts the passed string into a 2D char array
+   * Converts the passed string into a 2D vector
    * @param input - the initialized string
    */
   void convertToBoard(string input);
@@ -80,11 +82,20 @@ class Board {
    * @param board
    */
   void isWinner(vector<vector<char>> userBoard);
+
   /**
-   * Assigns the correct enum to the holder variable based on who has won
+   * Assigns the correct enum to the holder variable based on who has won and
+   * checks for two winners on the board
    * @param player
    */
-  void assignWinner(char player);
+  void assignAndCheckWinner(char player);
+
+  /**
+   * Converts the passed string to lower case to keep regularity
+   * @param string
+   * @return lower cased string
+   */
+  string convertToLowerCase(string string);
 };
 
 }  // namespace tictactoe

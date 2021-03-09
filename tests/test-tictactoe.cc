@@ -12,9 +12,6 @@ TEST_CASE("Invalid string provided to constructor") {
   SECTION("String is too long") {
     REQUIRE_THROWS_AS(Board("XOXOXOXOXOXOX"), std::invalid_argument);
   }
-  SECTION("String contains special characters") {
-    REQUIRE_THROWS_AS(Board("*&%*&(&(^"), std::invalid_argument);
-  }
   SECTION("Empty string") {
     REQUIRE_THROWS_AS(Board(""), std::invalid_argument);
   }
@@ -97,13 +94,17 @@ TEST_CASE("Boards with no winner") {
   SECTION("Full board with no winner") {
     REQUIRE(Board("XXOOOXXXO").EvaluateBoard() == BoardState::NoWinner);
   }
-  SECTION("Partly-filled board with no winner") {
+  SECTION("Partly-filled board with last O move") {
     REQUIRE(Board("XX...OO..").EvaluateBoard() == BoardState::NoWinner);
+  }
+  SECTION("Party-filled Board with last X move") {
+    REQUIRE(Board("XX.O..X.O").EvaluateBoard() == BoardState::NoWinner);
   }
   SECTION("Empty Board with no winner") {
     REQUIRE(Board(".........").EvaluateBoard() == BoardState::NoWinner);
   }
 }
+
 TEST_CASE("Board has 2 winners") {
   SECTION("Board with 2 Row wins") {
     REQUIRE(Board("XXXOOO...").EvaluateBoard() == BoardState::UnreachableState);
@@ -113,5 +114,16 @@ TEST_CASE("Board has 2 winners") {
   }
   SECTION("Board with 2 X wins") {
     REQUIRE(Board("XXXXOOXOO").EvaluateBoard() == BoardState::Xwins);
+  }
+}
+TEST_CASE("Board with special characters") {
+  SECTION("Special Board with X win") {
+    REQUIRE(Board("^%@XXXO*O").EvaluateBoard() == BoardState::Xwins);
+ }
+  SECTION("Special Board with O win") {
+    REQUIRE(Board("&O]!OXXOX").EvaluateBoard() == BoardState::Owins);
+  }
+  SECTION("Special Board with no winner") {
+    REQUIRE(Board("X&)#*)O#?").EvaluateBoard() == BoardState::NoWinner);
   }
 }

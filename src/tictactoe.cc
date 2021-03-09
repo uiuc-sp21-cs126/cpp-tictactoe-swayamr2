@@ -10,7 +10,7 @@ using std::vector;
 using std::invalid_argument;
 using std::move;
 Board::Board(string string) {
-  userString = move(string);
+  userString = convertToLowerCase(move(string));
   /*
    * If the string is convertible, we convert it into a game board. Else, throw
    * an invalid argument exception
@@ -22,7 +22,8 @@ Board::Board(string string) {
   }
 }
 BoardState Board::EvaluateBoard() {
-  if (!isBoardPlayable(gameBoard)) {
+  //Check if the board can be played on or not
+  if(!isBoardPlayable(gameBoard)) {
     currentEval = BoardState::UnreachableState;
     return currentEval;
   }
@@ -32,29 +33,20 @@ BoardState Board::EvaluateBoard() {
 }
 void Board::convertToBoard(string input) {
   int character = 0;
-  //Reset the sizes of both the outer and inner vectors to 0
-  gameBoard.resize(0);
-  playerMoves.resize(0);
   for (int row = 0; row < boardDimension; row++) {
     for (int column = 0; column < boardDimension; column++) {
       //Store the moves into the inner vector
       playerMoves.push_back(tolower(input.at(character)));
       character++;
     }
-    //Push the inner vector into the outer vector
+    //Push the inner vector into the outer vector and clear the inner vector
     gameBoard.push_back(playerMoves);
     playerMoves.clear();
   }
 }
-bool Board::isStringConvertible(string user) {
-  for (char & character : user) {
-    character = tolower(character);
-  }
-  if (user.length() != (boardDimension * boardDimension)) {
-    return false;
-  //If the string contains special characters, it is not convertible
-  } else if ((user.find('x') == user.npos) && (user.find('o') == user.npos) &&
-             (user.find(".") == user.npos)) {
+bool Board::isStringConvertible(string moves) {
+  //If the string cannot be converted to a 3x3 square, it is not convertible
+  if (moves.length() != (boardDimension * boardDimension)) {
     return false;
   }
   return true;
@@ -62,41 +54,42 @@ bool Board::isStringConvertible(string user) {
 bool Board::isBoardPlayable(vector<vector<char>> board) {
   int countX = countCharOnBoard(board, 'x');
   int countO = countCharOnBoard(board, 'o');
-  //If O's are greater than X's on the board, the board is not valid
+  // If O's are greater than X's on the board, the board is not valid
   if (countO > countX) {
     return false;
-  //If X's are much greater than O's on the board, someone has cheated
+    // If X's are much greater than O's on the board, someone has cheated
   } else if (countX > countO + 1) {
     return false;
   }
   return true;
 }
 int Board::countCharOnBoard(vector<vector<char>> board, char player) {
-  int count = 0;
+  int charCount = 0;
   for (int row = 0; row < boardDimension; row++) {
     for (int column = 0; column < boardDimension; column++) {
       if (board[row][column] == player) {
-        count++;
+        charCount++;
       }
     }
   }
-  return count;
+  return charCount;
 }
 void Board::isWinner(vector<vector<char>> board) {
   //Loop through the rows of the outer vector
   for (int row = 0; row < boardDimension; row++) {
-    if (board[row][0] == board[row][1] && board[row][1] == board[row][2])
-    {
+    if (board[row][0] == board[row][1] && board[row][1] == board[row][2]) {
       //Set the winning player to the certain character
       winningPlayer = board[row][0];
-      assignWinner(winningPlayer);
+      //Run the winning player through a check for two winners
+      assignAndCheckWinner(winningPlayer);
     }
   }
   //Loops through the columns of the outer vector
   for (int column = 0; column < boardDimension; column++) {
-    if (board[0][column] == board[1][column] && board[1][column] == board[2][column]) {
+    if (board[0][column] == board[1][column] &&
+        board[1][column] == board[2][column]) {
       winningPlayer = board[0][column];
-      assignWinner(winningPlayer);
+      assignAndCheckWinner(winningPlayer);
     }
   }
   //Loops through the left diagonals of the outer vector
@@ -104,33 +97,44 @@ void Board::isWinner(vector<vector<char>> board) {
     if (board[pos][pos] == board[pos + 1][pos + 1] &&
         board[pos + 1][pos + 1] == board[pos + 2][pos + 2]) {
       winningPlayer = board[pos][pos];
-      assignWinner(winningPlayer);
+      assignAndCheckWinner(winningPlayer);
+    }
   }
-}
   //Loops through the right diagonals of the outer vector
   for (int pos = 0; pos < 1; pos++) {
-    if (board[pos][boardDimension - 1] ==
-      board[pos + 1][boardDimension - 2]  &&
-      board[pos + 1][boardDimension - 2] == board[pos + 2][boardDimension - 3]) {
+    if (board[pos][boardDimension - 1] == board[pos + 1][boardDimension - 2] &&
+        board[pos + 1][boardDimension - 2] ==
+            board[pos + 2][boardDimension - 3]) {
       winningPlayer = board[pos][boardDimension - 1];
-      assignWinner(winningPlayer);
+      assignAndCheckWinner(winningPlayer);
+    }
   }
 }
-}
-void Board::assignWinner(char player) {
-  /*
-   * If the current state of the game differs from the state of the winning player,
-   * set the board state to be unreachable, as there must be two winners
-   * */
-  if(player == 'x' && currentEval == BoardState::Owins) {
-    currentEval = BoardState::UnreachableState;
-  } else if (player == 'o' && currentEval == BoardState::Xwins) {
-    currentEval = BoardState::UnreachableState;
-  //If no two winners are found, set the board state to the proper player
-  } else if (player == 'x') {
-    currentEval = BoardState::Xwins;
-  } else if (player == 'o') {
-    currentEval = BoardState::Owins;
+void Board::assignAndCheckWinner(char player) {
+  switch (player) {
+    case 'x':
+      //If the winning state has already been set, there must be 2 winners
+      if (currentEval == BoardState::Owins) {
+        currentEval = BoardState::UnreachableState;
+        break;
+      } else {
+        currentEval = BoardState::Xwins;
+        break;
+      }
+    case 'o':
+      if (currentEval == BoardState::Xwins) {
+        currentEval = BoardState::UnreachableState;
+        break;
+      } else {
+        currentEval = BoardState::Owins;
+        break;
+      }
   }
 }
+string Board::convertToLowerCase(string string)  {
+  for (char character : string) {
+    tolower(character);
+  }
+    return string;
+  }
 }
